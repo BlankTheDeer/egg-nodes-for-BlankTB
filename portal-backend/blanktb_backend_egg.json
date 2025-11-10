@@ -8,10 +8,10 @@
   "author": "blankthedeer@gmail.com",
   "name": "BlankTB Backend",
   "description": "FastAPI backend for the BlankTB Portal with MongoDB and Discord webhook alerts. Includes auto-healing Git sync support.",
-  "features": [],
   "images": {
     "Python 3.13": "ghcr.io/parkervcp/yolks:python_3.13"
   },
+  "features": [],
   "file_denylist": [],
   "startup": "if [ ! -d backend ]; then echo 'Backend folder missing, recloning repo...'; git clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .; fi && cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
   "config": {
