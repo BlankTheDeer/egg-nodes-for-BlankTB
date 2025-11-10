@@ -1,5 +1,5 @@
 {
-    "_comment": "BlankTB Portal Backend — FastAPI egg (verified Pelican-compatible)",
+    "_comment": "BlankTB Portal Backend â€” FastAPI-based egg for Pelican/Pterodactyl. (c) Blank The Deer",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
@@ -7,145 +7,141 @@
     "exported_at": "2025-11-09T00:00:00+00:00",
     "name": "BlankTB Portal Backend",
     "author": "Blank The Deer",
-    "description": "A FastAPI-based backend for the BlankTB Portal — includes MongoDB, Discord webhooks, mail, and reCAPTCHA integration.",
-    "features": null,
+    "description": "A FastAPI-based backend for the BlankTB Portal â€” includes MongoDB, Discord webhook alerts, mail support, and reCAPTCHA integration.",
     "images": [
         "ghcr.io/pterodactyl/yolks:python_3.11"
     ],
-    "file_denylist": [
-        "*.pyc",
-        "__pycache__"
-    ],
-    "startup": "source .venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "features": null,
+    "startup": "uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
     "config": {
         "files": "{}",
-        "startup": "{ \"done\": \"Application startup complete.\" }",
+        "startup": "{\n    \"done\": \"Application startup complete.\"\n}",
         "stop": "CTRL+C"
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-venv python3-pip\npython3 -m venv .venv\nsource .venv/bin/activate\ngit clone https://{{PAT}}@github.com/BlankTheDeer/gba.git --branch dev --single-branch backend_src\ncd backend_src/backend\npip install -r requirements.txt\ndeactivate\necho 'BlankTB Backend installed successfully.'",
-            "container": "ghcr.io/pterodactyl/yolks:python_3.11",
+            "script": "#!/bin/bash\napt update -y\napt install -y python3 python3-venv python3-pip git\n\necho \"ðŸ“¦ Setting up BlankTB Portal Backend...\"\n\n# Create virtual environment\npython3 -m venv .venv\nsource .venv/bin/activate\n\n# Install dependencies\npip install --upgrade pip\npip install -r requirements.txt || pip install fastapi uvicorn motor aiohttp python-dotenv psutil\n\necho \"âœ… Installation complete. You can now start the backend.\"\n",
+            "container": "python:3.11",
             "entrypoint": "bash"
         }
     },
     "variables": [
         {
-            "name": "PAT",
-            "description": "GitHub Personal Access Token (read-only).",
-            "env_variable": "PAT",
-            "default_value": "",
-            "user_viewable": false,
+            "name": "APP_NAME",
+            "description": "Application name for display.",
+            "env_variable": "APP_NAME",
+            "default_value": "BlankTB Portal",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:50"
+        },
+        {
+            "name": "DOMAIN",
+            "description": "Primary domain for the API (used in CORS and contact info).",
+            "env_variable": "DOMAIN",
+            "default_value": "https://gba.blanktb.net",
+            "user_viewable": true,
             "user_editable": true,
             "rules": "required|string"
         },
         {
             "name": "MONGO_URI",
-            "description": "MongoDB connection string.",
+            "description": "MongoDB connection string including credentials and database name.",
             "env_variable": "MONGO_URI",
-            "default_value": "mongodb://username:password@localhost:27017/blanktb_portal",
+            "default_value": "mongodb://Portal:Portalemu12@localhost:27017/blanktb_portal?authSource=blanktb_portal",
             "user_viewable": false,
             "user_editable": true,
             "rules": "required|string"
         },
         {
             "name": "JWT_SECRET",
-            "description": "JWT secret key.",
+            "description": "JWT signing secret used for authentication.",
             "env_variable": "JWT_SECRET",
-            "default_value": "supersecretkey",
+            "default_value": "changemeplease",
             "user_viewable": false,
             "user_editable": true,
-            "rules": "required|string"
-        },
-        {
-            "name": "RECAPTCHA_SECRET",
-            "description": "Google reCAPTCHA secret key.",
-            "env_variable": "RECAPTCHA_SECRET",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "string"
+            "rules": "required|string|min:16"
         },
         {
             "name": "MAIL_SERVER",
-            "description": "SMTP mail server address.",
+            "description": "SMTP mail server host (e.g., smtp.gmail.com).",
             "env_variable": "MAIL_SERVER",
-            "default_value": "smtp.gmail.com",
-            "user_viewable": false,
+            "default_value": "",
+            "user_viewable": true,
             "user_editable": true,
-            "rules": "string"
+            "rules": "nullable|string"
         },
         {
             "name": "MAIL_PORT",
-            "description": "SMTP port.",
+            "description": "Mail server port number (usually 465 or 587).",
             "env_variable": "MAIL_PORT",
             "default_value": "587",
-            "user_viewable": false,
+            "user_viewable": true,
             "user_editable": true,
-            "rules": "integer"
+            "rules": "required|integer"
         },
         {
             "name": "MAIL_USER",
-            "description": "SMTP username.",
+            "description": "Mail username or sender address.",
             "env_variable": "MAIL_USER",
-            "default_value": "noreply@blanktb.net",
-            "user_viewable": false,
+            "default_value": "",
+            "user_viewable": true,
             "user_editable": true,
-            "rules": "string"
+            "rules": "nullable|string"
         },
         {
             "name": "MAIL_PASS",
-            "description": "SMTP password or app token.",
+            "description": "Password or app key for mail sender.",
             "env_variable": "MAIL_PASS",
             "default_value": "",
             "user_viewable": false,
             "user_editable": true,
-            "rules": "string"
+            "rules": "nullable|string"
+        },
+        {
+            "name": "RECAPTCHA_SECRET",
+            "description": "Google reCAPTCHA secret key for verification.",
+            "env_variable": "RECAPTCHA_SECRET",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": "nullable|string"
         },
         {
             "name": "DISCORD_ALERT_WEBHOOK",
-            "description": "Discord webhook for instant alerts.",
+            "description": "Discord webhook URL for instant status alerts.",
             "env_variable": "DISCORD_ALERT_WEBHOOK",
             "default_value": "",
             "user_viewable": false,
             "user_editable": true,
-            "rules": "string"
+            "rules": "nullable|string"
         },
         {
             "name": "DISCORD_UPTIME_WEBHOOK",
-            "description": "Discord webhook for uptime summaries.",
+            "description": "Discord webhook for weekly uptime summaries.",
             "env_variable": "DISCORD_UPTIME_WEBHOOK",
             "default_value": "",
             "user_viewable": false,
             "user_editable": true,
-            "rules": "string"
+            "rules": "nullable|string"
         },
         {
-            "name": "DOMAIN",
-            "description": "Public domain for this backend.",
-            "env_variable": "DOMAIN",
-            "default_value": "https://gba.blanktb.net",
-            "user_viewable": false,
+            "name": "DEBUG",
+            "description": "Enable debug mode (true/false).",
+            "env_variable": "DEBUG",
+            "default_value": "false",
+            "user_viewable": true,
             "user_editable": true,
-            "rules": "string"
-        },
-        {
-            "name": "APP_NAME",
-            "description": "Application name.",
-            "env_variable": "APP_NAME",
-            "default_value": "BlankTB Portal",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "string"
+            "rules": "required|string"
         },
         {
             "name": "APP_VERSION",
-            "description": "Application version.",
+            "description": "Application version for tracking and health responses.",
             "env_variable": "APP_VERSION",
             "default_value": "1.0.0",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "string"
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|string"
         }
     ]
 }
