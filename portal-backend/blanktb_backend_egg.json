@@ -5,7 +5,7 @@
     "update_url": null
   },
   "exported_at": "2025-11-10T00:00:00Z",
-  "author": "Blank The Deer",
+  "author": "blankthedeer@gmail.com",
   "name": "BlankTB Backend",
   "description": "FastAPI backend for the BlankTB Portal with MongoDB and webhook status monitoring.",
   "features": [],
