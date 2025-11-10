@@ -1,5 +1,5 @@
 {
-  "_comment": "BlankTB Portal Backend Egg - FastAPI + MongoDB",
+  "_comment": "BlankTB Portal Backend Egg - FastAPI + MongoDB (self-healing)",
   "meta": {
     "version": "PTDL_v2",
     "update_url": null
@@ -7,13 +7,13 @@
   "exported_at": "2025-11-10T00:00:00Z",
   "author": "blankthedeer@gmail.com",
   "name": "BlankTB Backend",
-  "description": "FastAPI backend for the BlankTB Portal with MongoDB and webhook status monitoring.",
+  "description": "FastAPI backend for the BlankTB Portal with MongoDB and Discord webhook alerts. Includes auto-healing Git sync support.",
   "features": [],
-  "docker_images": {
+  "images": {
     "Python 3.13": "ghcr.io/parkervcp/yolks:python_3.13"
   },
   "file_denylist": [],
-  "startup": "cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
+  "startup": "if [ ! -d backend ]; then echo 'Backend folder missing, recloning repo...'; git clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .; fi && cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
   "config": {
     "files": "{}",
     "startup": "{\n    \"done\": \"Application startup complete.\"\n}",
@@ -30,7 +30,7 @@
   "variables": [
     {
       "name": "GITHUB_PAT",
-      "description": "GitHub Personal Access Token (Read-only) for accessing the private backend repository.",
+      "description": "GitHub Personal Access Token (read-only) for accessing the private backend repository.",
       "env_variable": "GITHUB_PAT",
       "default_value": "",
       "user_viewable": true,
