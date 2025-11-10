@@ -1,140 +1,182 @@
 {
-  "_comment": "BlankTB Portal Backend Egg - FastAPI + MongoDB (self-healing)",
-  "meta": {
-    "version": "PTDL_v2",
-    "update_url": null
-  },
-  "exported_at": "2025-11-10T00:00:00Z",
-  "author": "blankthedeer@gmail.com",
-  "name": "BlankTB Backend",
-  "description": "FastAPI backend for the BlankTB Portal with MongoDB and Discord webhook alerts. Includes auto-healing Git sync support.",
-  "images": {
-    "Python 3.13": "ghcr.io/parkervcp/yolks:python_3.13"
-  },
-  "features": [],
-  "file_denylist": [],
-  "startup": "if [ ! -d backend ]; then echo 'Backend folder missing, recloning repo...'; git clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .; fi && cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
-  "config": {
-    "files": "{}",
-    "startup": "{\n    \"done\": \"Application startup complete.\"\n}",
-    "stop": "stop",
-    "logs": "{}"
-  },
-  "scripts": {
-    "installation": {
-      "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-pip\ncd /mnt/server\n\necho \"--- Cloning BlankTB Backend Repository ---\"\ngit clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .\ncd backend\n\npip install -r requirements.txt\n\necho \"--- Backend Setup Complete ---\"",
-      "container": "python:3.13",
-      "entrypoint": "bash"
-    }
-  },
-  "variables": [
-    {
-      "name": "GITHUB_PAT",
-      "description": "GitHub Personal Access Token (read-only) for accessing the private backend repository.",
-      "env_variable": "GITHUB_PAT",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string"
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PLCN_v2",
+        "update_url": null
     },
-    {
-      "name": "APP_NAME",
-      "description": "Application name for FastAPI display.",
-      "env_variable": "APP_NAME",
-      "default_value": "BlankTB Portal",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "string"
+    "exported_at": "2025-11-10T10:29:44+00:00",
+    "name": "BlankTB Backend",
+    "author": "blankthedeer@gmail.com",
+    "uuid": "9a4ed660-de8f-4ee0-a8e3-33366aee8d32",
+    "description": "FastAPI backend for the BlankTB Portal with MongoDB and Discord webhook alerts. Includes auto-healing Git sync support.",
+    "tags": [],
+    "features": [],
+    "docker_images": {
+        "Python 3.13": "ghcr.io/parkervcp/yolks:python_3.13"
     },
-    {
-      "name": "DOMAIN",
-      "description": "Primary domain of the application.",
-      "env_variable": "DOMAIN",
-      "default_value": "https://gba.blanktb.net",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string"
+    "file_denylist": [],
+    "startup": "if [ ! -d backend ]; then echo 'Backend folder missing, recloning repo...'; git clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .; fi && cd backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\n    \"done\": \"Application startup complete.\"\n}",
+        "logs": "{}",
+        "stop": "stop"
     },
-    {
-      "name": "MONGO_URI",
-      "description": "MongoDB connection URI provided by Pelican's database feature.",
-      "env_variable": "MONGO_URI",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string"
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-pip\ncd /mnt/server\n\necho \"--- Cloning BlankTB Backend Repository ---\"\ngit clone https://{{GITHUB_PAT}}@github.com/BlankTheDeer/gba.git .\ncd backend\n\npip install -r requirements.txt\n\necho \"--- Backend Setup Complete ---\"",
+            "container": "python:3.13",
+            "entrypoint": "bash"
+        }
     },
-    {
-      "name": "JWT_SECRET",
-      "description": "JWT signing secret key.",
-      "env_variable": "JWT_SECRET",
-      "default_value": "changemeplease",
-      "user_viewable": false,
-      "user_editable": true,
-      "rules": "required|string"
-    },
-    {
-      "name": "MAIL_SERVER",
-      "description": "Mail server hostname (for support tickets and password resets).",
-      "env_variable": "MAIL_SERVER",
-      "default_value": "smtp.gmail.com",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "string"
-    },
-    {
-      "name": "MAIL_PORT",
-      "description": "Mail server port number.",
-      "env_variable": "MAIL_PORT",
-      "default_value": "587",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "integer"
-    },
-    {
-      "name": "MAIL_USER",
-      "description": "Mail username or address.",
-      "env_variable": "MAIL_USER",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "string"
-    },
-    {
-      "name": "MAIL_PASS",
-      "description": "Mail server password or app token.",
-      "env_variable": "MAIL_PASS",
-      "default_value": "",
-      "user_viewable": false,
-      "user_editable": true,
-      "rules": "string"
-    },
-    {
-      "name": "RECAPTCHA_SECRET",
-      "description": "Google reCAPTCHA secret for verification.",
-      "env_variable": "RECAPTCHA_SECRET",
-      "default_value": "",
-      "user_viewable": false,
-      "user_editable": true,
-      "rules": "string"
-    },
-    {
-      "name": "DISCORD_ALERT_WEBHOOK",
-      "description": "Discord webhook for backend status alerts.",
-      "env_variable": "DISCORD_ALERT_WEBHOOK",
-      "default_value": "",
-      "user_viewable": false,
-      "user_editable": true,
-      "rules": "string"
-    },
-    {
-      "name": "DISCORD_UPTIME_WEBHOOK",
-      "description": "Discord webhook for uptime summary reports.",
-      "env_variable": "DISCORD_UPTIME_WEBHOOK",
-      "default_value": "",
-      "user_viewable": false,
-      "user_editable": true,
-      "rules": "string"
-    }
-  ]
+    "variables": [
+        {
+            "name": "APP_NAME",
+            "description": "Application name for FastAPI display.",
+            "env_variable": "APP_NAME",
+            "default_value": "BlankTB Portal",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 1
+        },
+        {
+            "name": "DISCORD_ALERT_WEBHOOK",
+            "description": "Discord webhook for backend status alerts.",
+            "env_variable": "DISCORD_ALERT_WEBHOOK",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 2
+        },
+        {
+            "name": "DISCORD_UPTIME_WEBHOOK",
+            "description": "Discord webhook for uptime summary reports.",
+            "env_variable": "DISCORD_UPTIME_WEBHOOK",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 3
+        },
+        {
+            "name": "DOMAIN",
+            "description": "Primary domain of the application.",
+            "env_variable": "DOMAIN",
+            "default_value": "https://gba.blanktb.net",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": 4
+        },
+        {
+            "name": "GITHUB_PAT",
+            "description": "GitHub Personal Access Token (read-only) for accessing the private backend repository.",
+            "env_variable": "GITHUB_PAT",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": 5
+        },
+        {
+            "name": "JWT_SECRET",
+            "description": "JWT signing secret key.",
+            "env_variable": "JWT_SECRET",
+            "default_value": "changemeplease",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": 6
+        },
+        {
+            "name": "MAIL_PASS",
+            "description": "Mail server password or app token.",
+            "env_variable": "MAIL_PASS",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 7
+        },
+        {
+            "name": "MAIL_PORT",
+            "description": "Mail server port number.",
+            "env_variable": "MAIL_PORT",
+            "default_value": "587",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "integer"
+            ],
+            "sort": 8
+        },
+        {
+            "name": "MAIL_SERVER",
+            "description": "Mail server hostname (for support tickets and password resets).",
+            "env_variable": "MAIL_SERVER",
+            "default_value": "smtp.gmail.com",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 9
+        },
+        {
+            "name": "MAIL_USER",
+            "description": "Mail username or address.",
+            "env_variable": "MAIL_USER",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 10
+        },
+        {
+            "name": "MONGO_URI",
+            "description": "MongoDB connection URI provided by Pelican's database feature.",
+            "env_variable": "MONGO_URI",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": [
+                "required",
+                "string"
+            ],
+            "sort": 11
+        },
+        {
+            "name": "RECAPTCHA_SECRET",
+            "description": "Google reCAPTCHA secret for verification.",
+            "env_variable": "RECAPTCHA_SECRET",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": [
+                "string"
+            ],
+            "sort": 12
+        }
+    ]
 }
