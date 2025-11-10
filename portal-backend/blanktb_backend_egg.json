@@ -1,9 +1,8 @@
 {
-  "_comment": "🦌 BlankTB Portal Backend Egg - FastAPI (Private GitHub Repo)",
   "meta": {
     "version": "1.0",
     "author": "Blank The Deer",
-    "update_url": "https://raw.githubusercontent.com/BlankTheDeer/blanktb-eggs/main/blanktb_backend_egg.json"
+    "update_url": "https://raw.githubusercontent.com/BlankTheDeer/egg-nodes-for-BlankTB/dev/portal-backend/blanktb_backend_egg.json"
   },
   "exported_at": "2025-11-09T00:00:00Z",
   "docker_images": {
@@ -15,13 +14,13 @@
   ],
   "startup": "source .venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000",
   "config": {
-    "startup": "{\n  \"done\": \"Application startup complete.\",\n  \"userInteraction\": []\n}",
+    "startup": "{ \"done\": \"Application startup complete.\" }",
     "logs": "{}",
     "stop": "CTRL+C"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-venv python3-pip\npython3 -m venv .venv\nsource .venv/bin/activate\ngit clone https://{{PAT}}@github.com/BlankTheDeer/gba.git --branch dev --single-branch backend_src\ncd backend_src/backend\npip install -r requirements.txt\ndeactivate\necho '🦌 BlankTB Backend installed successfully! 🎉'",
+      "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-venv python3-pip\npython3 -m venv .venv\nsource .venv/bin/activate\ngit clone https://{{PAT}}@github.com/BlankTheDeer/gba.git --branch dev --single-branch backend_src\ncd backend_src/backend\npip install -r requirements.txt\ndeactivate\necho 'BlankTB Backend installed successfully.'",
       "container": "ghcr.io/pterodactyl/yolks:python_3.11",
       "entrypoint": "bash"
     }
@@ -29,7 +28,7 @@
   "variables": [
     {
       "name": "PAT",
-      "description": "GitHub Personal Access Token with read-only access to private BlankTheDeer/gba repo.",
+      "description": "GitHub Personal Access Token with read-only access to the private BlankTheDeer/gba repo.",
       "env_variable": "PAT",
       "default_value": "",
       "user_viewable": false,
@@ -53,7 +52,96 @@
       "user_viewable": false,
       "user_editable": true,
       "rules": "required|string"
+    },
+    {
+      "name": "RECAPTCHA_SECRET",
+      "description": "Google reCAPTCHA secret key for form validation.",
+      "env_variable": "RECAPTCHA_SECRET",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "MAIL_SERVER",
+      "description": "SMTP mail server address (e.g., smtp.gmail.com).",
+      "env_variable": "MAIL_SERVER",
+      "default_value": "smtp.gmail.com",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "MAIL_PORT",
+      "description": "SMTP mail server port (usually 587 for TLS).",
+      "env_variable": "MAIL_PORT",
+      "default_value": "587",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|integer"
+    },
+    {
+      "name": "MAIL_USER",
+      "description": "Email username for outbound mail (e.g., noreply@blanktb.net).",
+      "env_variable": "MAIL_USER",
+      "default_value": "noreply@blanktb.net",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "MAIL_PASS",
+      "description": "Password or app token for the mail user.",
+      "env_variable": "MAIL_PASS",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "DISCORD_ALERT_WEBHOOK",
+      "description": "Discord webhook URL for instant alert notifications.",
+      "env_variable": "DISCORD_ALERT_WEBHOOK",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "string"
+    },
+    {
+      "name": "DISCORD_UPTIME_WEBHOOK",
+      "description": "Discord webhook URL for weekly uptime summaries.",
+      "env_variable": "DISCORD_UPTIME_WEBHOOK",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "string"
+    },
+    {
+      "name": "DOMAIN",
+      "description": "Public domain name for this backend instance.",
+      "env_variable": "DOMAIN",
+      "default_value": "https://gba.blanktb.net",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "APP_NAME",
+      "description": "Display name for this backend instance.",
+      "env_variable": "APP_NAME",
+      "default_value": "BlankTB Portal",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "string"
+    },
+    {
+      "name": "APP_VERSION",
+      "description": "Version label for this backend instance.",
+      "env_variable": "APP_VERSION",
+      "default_value": "1.0.0",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "string"
     }
   ]
 }
-
