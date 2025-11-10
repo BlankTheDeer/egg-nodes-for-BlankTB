@@ -13,16 +13,15 @@
     "*.pyc",
     "__pycache__"
   ],
-  "startup": "bash start_backend.sh",
+  "startup": "source .venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000",
   "config": {
-    "files": "{\n  \"config/.env\": {\n    \"parser\": \"file\",\n    \"find\": {\n      \"MONGO_URI\": \"{{server.build.env.MONGO_URI}}\",\n      \"JWT_SECRET\": \"{{server.build.env.JWT_SECRET}}\"\n    }\n  }\n}",
     "startup": "{\n  \"done\": \"Application startup complete.\",\n  \"userInteraction\": []\n}",
     "logs": "{}",
     "stop": "CTRL+C"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-venv python3-pip\npython3 -m venv .venv\nsource .venv/bin/activate\ngit clone https://{{PAT}}@github.com/BlankTheDeer/gba.git --branch dev --single-branch backend_src\ncd backend_src/backend\npip install -r requirements.txt\ndeactivate\necho \"Backend installed successfully 🦌\"",
+      "script": "#!/bin/bash\napt update -y\napt install -y git python3 python3-venv python3-pip\npython3 -m venv .venv\nsource .venv/bin/activate\ngit clone https://{{PAT}}@github.com/BlankTheDeer/gba.git --branch dev --single-branch backend_src\ncd backend_src/backend\npip install -r requirements.txt\ndeactivate\necho '🦌 BlankTB Backend installed successfully! 🎉'",
       "container": "ghcr.io/pterodactyl/yolks:python_3.11",
       "entrypoint": "bash"
     }
@@ -57,3 +56,4 @@
     }
   ]
 }
+
