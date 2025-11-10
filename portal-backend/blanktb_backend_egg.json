@@ -1,147 +1,156 @@
 {
-    "_comment": "BlankTB Portal Backend â€” FastAPI-based egg for Pelican/Pterodactyl. (c) Blank The Deer",
-    "meta": {
-        "version": "PTDL_v2",
-        "update_url": null
+  "_comment": "BlankTB Portal Backend — FastAPI-based egg for Pelican/Pterodactyl.",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-11-10T00:00:00+00:00",
+  "name": "BlankTB Portal Backend",
+  "author": "Blank The Deer",
+  "description": "A FastAPI backend for the BlankTB Portal with MongoDB, Discord webhooks, mail, and reCAPTCHA integration. Includes automatic updates and startup alerts.",
+  "images": [
+    "ghcr.io/pterodactyl/yolks:python_3.11"
+  ],
+  "features": null,
+  "startup": "bash startup.sh",
+  "config": {
+    "files": "{}",
+    "startup": "{\\n  \\\"done\\\": \\\"Application startup complete.\\\"\\n}",
+    "stop": "CTRL+C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\\napt update -y && apt install -y python3 python3-venv python3-pip git curl\\necho 'Setting up BlankTB Portal Backend...'\\n\\nif [ -z \\\"${GITHUB_PAT}\\\" ]; then\\n  echo 'ERROR: GITHUB_PAT not set. Please set the GitHub Personal Access Token before installation.'\\n  exit 1\\nfi\\n\\n# Clone private repository\\ngit clone https://${GITHUB_PAT}@github.com/BlankTheDeer/gba.git || { echo 'Failed to clone repo. Check your PAT permissions (read access required).'; exit 1; }\\ncd gba/backend\\n\\n# Create virtual environment\\npython3 -m venv .venv\\nsource .venv/bin/activate\\n\\n# Install dependencies\\npip install --upgrade pip\\npip install -r requirements.txt || pip install fastapi uvicorn motor aiohttp python-dotenv psutil\\n\\n# Create startup script\\ncat > startup.sh << 'EOF'\\n#!/bin/bash\\necho 'Checking for updates from GitHub...'\\ncd /mnt/server/gba/backend\\nif git pull | grep -q 'Already up to date'; then\\n  echo 'No updates found. Launching backend.'\\nelse\\n  echo 'Repository updated. Installing latest dependencies.'\\n  source .venv/bin/activate\\n  pip install -r requirements.txt --upgrade\\nfi\\n\\necho 'Starting BlankTB Portal Backend...'\\nsource .venv/bin/activate\\nuvicorn app.main:app --host 0.0.0.0 --port ${SERVER_PORT} &\\nSERVER_PID=$!\\nsleep 10\\nif [ ! -z \\\"${DISCORD_ALERT_WEBHOOK}\\\" ]; then\\n  echo 'Notifying Discord of successful startup...'\\n  curl -H 'Content-Type: application/json' -X POST -d '{\\\"content\\\": \\\"BlankTB Backend successfully deployed and running on port ${SERVER_PORT}.\\\"}' ${DISCORD_ALERT_WEBHOOK} >/dev/null 2>&1\\nfi\\nwait ${SERVER_PID}\\nEOF\\nchmod +x startup.sh\\n\\necho 'Installation complete. Ready to start the backend.'\\n",
+      "container": "python:3.11",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "GITHUB_PAT",
+      "description": "GitHub Personal Access Token for private repo cloning (read-only access).",
+      "env_variable": "GITHUB_PAT",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
     },
-    "exported_at": "2025-11-09T00:00:00+00:00",
-    "name": "BlankTB Portal Backend",
-    "author": "Blank The Deer",
-    "description": "A FastAPI-based backend for the BlankTB Portal â€” includes MongoDB, Discord webhook alerts, mail support, and reCAPTCHA integration.",
-    "images": [
-        "ghcr.io/pterodactyl/yolks:python_3.11"
-    ],
-    "features": null,
-    "startup": "uvicorn app.main:app --host 0.0.0.0 --port {{SERVER_PORT}}",
-    "config": {
-        "files": "{}",
-        "startup": "{\n    \"done\": \"Application startup complete.\"\n}",
-        "stop": "CTRL+C"
+    {
+      "name": "APP_NAME",
+      "description": "Application name for display.",
+      "env_variable": "APP_NAME",
+      "default_value": "BlankTB Portal",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:50"
     },
-    "scripts": {
-        "installation": {
-            "script": "#!/bin/bash\napt update -y\napt install -y python3 python3-venv python3-pip git\n\necho \"ðŸ“¦ Setting up BlankTB Portal Backend...\"\n\n# Create virtual environment\npython3 -m venv .venv\nsource .venv/bin/activate\n\n# Install dependencies\npip install --upgrade pip\npip install -r requirements.txt || pip install fastapi uvicorn motor aiohttp python-dotenv psutil\n\necho \"âœ… Installation complete. You can now start the backend.\"\n",
-            "container": "python:3.11",
-            "entrypoint": "bash"
-        }
+    {
+      "name": "DOMAIN",
+      "description": "Primary domain for the API (used in CORS and contact info).",
+      "env_variable": "DOMAIN",
+      "default_value": "https://gba.blanktb.net",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
     },
-    "variables": [
-        {
-            "name": "APP_NAME",
-            "description": "Application name for display.",
-            "env_variable": "APP_NAME",
-            "default_value": "BlankTB Portal",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:50"
-        },
-        {
-            "name": "DOMAIN",
-            "description": "Primary domain for the API (used in CORS and contact info).",
-            "env_variable": "DOMAIN",
-            "default_value": "https://gba.blanktb.net",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string"
-        },
-        {
-            "name": "MONGO_URI",
-            "description": "MongoDB connection string including credentials and database name.",
-            "env_variable": "MONGO_URI",
-            "default_value": "mongodb://Portal:Portalemu12@localhost:27017/blanktb_portal?authSource=blanktb_portal",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "required|string"
-        },
-        {
-            "name": "JWT_SECRET",
-            "description": "JWT signing secret used for authentication.",
-            "env_variable": "JWT_SECRET",
-            "default_value": "changemeplease",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "required|string|min:16"
-        },
-        {
-            "name": "MAIL_SERVER",
-            "description": "SMTP mail server host (e.g., smtp.gmail.com).",
-            "env_variable": "MAIL_SERVER",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "MAIL_PORT",
-            "description": "Mail server port number (usually 465 or 587).",
-            "env_variable": "MAIL_PORT",
-            "default_value": "587",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|integer"
-        },
-        {
-            "name": "MAIL_USER",
-            "description": "Mail username or sender address.",
-            "env_variable": "MAIL_USER",
-            "default_value": "",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "MAIL_PASS",
-            "description": "Password or app key for mail sender.",
-            "env_variable": "MAIL_PASS",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "RECAPTCHA_SECRET",
-            "description": "Google reCAPTCHA secret key for verification.",
-            "env_variable": "RECAPTCHA_SECRET",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "DISCORD_ALERT_WEBHOOK",
-            "description": "Discord webhook URL for instant status alerts.",
-            "env_variable": "DISCORD_ALERT_WEBHOOK",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "DISCORD_UPTIME_WEBHOOK",
-            "description": "Discord webhook for weekly uptime summaries.",
-            "env_variable": "DISCORD_UPTIME_WEBHOOK",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": true,
-            "rules": "nullable|string"
-        },
-        {
-            "name": "DEBUG",
-            "description": "Enable debug mode (true/false).",
-            "env_variable": "DEBUG",
-            "default_value": "false",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string"
-        },
-        {
-            "name": "APP_VERSION",
-            "description": "Application version for tracking and health responses.",
-            "env_variable": "APP_VERSION",
-            "default_value": "1.0.0",
-            "user_viewable": true,
-            "user_editable": false,
-            "rules": "required|string"
-        }
-    ]
+    {
+      "name": "MONGO_URI",
+      "description": "MongoDB connection string including credentials and database name.",
+      "env_variable": "MONGO_URI",
+      "default_value": "mongodb://Portal:Portalemu12@localhost:27017/blanktb_portal?authSource=blanktb_portal",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "JWT_SECRET",
+      "description": "JWT signing secret used for authentication.",
+      "env_variable": "JWT_SECRET",
+      "default_value": "changemeplease",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "required|string|min:16"
+    },
+    {
+      "name": "MAIL_SERVER",
+      "description": "SMTP mail server host (e.g., smtp.gmail.com).",
+      "env_variable": "MAIL_SERVER",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "MAIL_PORT",
+      "description": "Mail server port number (usually 465 or 587).",
+      "env_variable": "MAIL_PORT",
+      "default_value": "587",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer"
+    },
+    {
+      "name": "MAIL_USER",
+      "description": "Mail username or sender address.",
+      "env_variable": "MAIL_USER",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "MAIL_PASS",
+      "description": "Password or app key for mail sender.",
+      "env_variable": "MAIL_PASS",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "RECAPTCHA_SECRET",
+      "description": "Google reCAPTCHA secret key for verification.",
+      "env_variable": "RECAPTCHA_SECRET",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "DISCORD_ALERT_WEBHOOK",
+      "description": "Discord webhook URL for instant status alerts and startup messages.",
+      "env_variable": "DISCORD_ALERT_WEBHOOK",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "DISCORD_UPTIME_WEBHOOK",
+      "description": "Discord webhook for weekly uptime summaries.",
+      "env_variable": "DISCORD_UPTIME_WEBHOOK",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": true,
+      "rules": "nullable|string"
+    },
+    {
+      "name": "DEBUG",
+      "description": "Enable debug mode (true/false).",
+      "env_variable": "DEBUG",
+      "default_value": "false",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "APP_VERSION",
+      "description": "Application version for tracking and health responses.",
+      "env_variable": "APP_VERSION",
+      "default_value": "1.0.0",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|string"
+    }
+  ]
 }
