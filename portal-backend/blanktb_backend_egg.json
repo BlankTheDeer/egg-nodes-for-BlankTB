@@ -8,7 +8,9 @@
   "name": "BlankTB Portal Backend",
   "author": "Blank The Deer",
   "description": "A FastAPI backend for the BlankTB Portal with MongoDB, Discord webhooks, mail, and reCAPTCHA integration. Includes automatic updates and startup alerts.",
-  "images": ["python:3.11-slim"],
+  "images": [
+    "python:3.11-slim"
+  ],
   "features": null,
   "startup": "source .venv/bin/activate && uvicorn app.main:app --host 0.0.0.0 --port 8000",
   "config": {
