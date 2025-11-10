@@ -8,6 +8,9 @@
   "name": "BlankTB Portal Backend",
   "author": "BlankTheDeer",
   "description": "FastAPI-powered backend for BlankTB Portal (gba.blanktb.net) with MongoDB integration, Discord alerts, and status management.",
+  "docker_images": {
+    "Python 3.13": "ghcr.io/parkervcp/yolks:python_3.13"
+  },
   "images": [
     "ghcr.io/parkervcp/yolks:python_3.13"
   ],
